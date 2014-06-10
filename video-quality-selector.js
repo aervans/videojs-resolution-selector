@@ -300,13 +300,20 @@
 		// Make sure we have at least 2 available resolutions before we add the button
 		if ( available_res.length < 2 ) { return; }
 		
-		// Set the video to start out with the default res if it's available
-		if ( settings.default_res && available_res[settings.default_res] ) {
-			
-			player.src( available_res[settings.default_res] );
-			player.currentRes = settings.default_res;
+    // Split default resolutions if set. otherwise default to an empty array
+    var defaultResolutions = settings.default_res ? settings.default_res.split(',') : [];
+
+    // Iterate over each of the split resolutions looking for a match
+    for (var i = 0; i < defaultResolutions.length; i++) {
+
+      // Set the video to start out with the default res if it's available
+      if (available_res[defaultResolutions[i]]) {
+        player.src(available_res[defaultResolutions[i]] );
+        player.currentRes = defaultResolutions[i];
+        break;
+      }
 		}
-		
+
 		// Helper function to get the current resolution
 		player.getCurrentRes = function() {
 			
