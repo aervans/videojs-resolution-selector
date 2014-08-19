@@ -23,7 +23,7 @@ build/Release
 
 # Dependency directories
 node_modules
-lib
+lib/*
 
 # Users Environment Variables
 .lock-wscript
