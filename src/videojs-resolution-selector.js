@@ -61,9 +61,28 @@
 		res_label : function( res ) {
 			
 			return ( /^\d+$/.test( res ) ) ? res + 'p' : res;
-		}
+		},
+
+    matchResolution: function(resStack, res) {
+    },
+
+		/**
+     * returns a dummy object that implements the basic get/set
+     * functionality of the Cookies library. Used in the case where
+     * the Cookies library is not present
+     */
+    buildCookiesDummy: function() {
+      return {
+        get: function(key) { 
+          return "";
+        },
+        set: function(key, val) { 
+          return false;
+        }
+      };
+    }
 	};
-	
+
 	/***********************************************************************************
 	 * Setup our resolution menu items
 	 ***********************************************************************************/
@@ -225,7 +244,7 @@
 		
 		// Only enable the plugin on HTML5 videos
 		if ( ! this.el().firstChild.canPlayType  ) { return; }
-		
+
 		var player = this,
 			sources	= player.options().sources,
 			i = sources.length,
@@ -245,8 +264,11 @@
 			resolutionSelector,
 			
 			// Split default resolutions if set and valid, otherwise default to an empty array
-			default_resolutions = ( settings.default_res && typeof settings.default_res == 'string' ) ? settings.default_res.split( ',' ) : [];
-		
+			default_resolutions = ( settings.default_res && typeof settings.default_res == 'string' ) ? settings.default_res.split( ',' ) : [],
+      cookieNamespace = 'videojs.resolutionSelector',
+      resCookieName = cookieNamespace + '.res',
+      cookieRef = (typeof(Cookies) === "function") ? Cookies : methods.buildCookiesDummy();
+
 		// Get all of the available resoloutions
 		while ( i > 0 ) {
 			
@@ -309,9 +331,15 @@
 		// Make sure we have at least 2 available resolutions before we add the button
 		if ( available_res.length < 2 ) { return; }
 		
+    var resCookie = cookieRef.get(resCookieName)
+
+    if (resCookie) {
+      // rebuild the default_resolutions stack with the cookie's resolution on top
+      default_resolutions = [resCookie].concat(default_resolutions);
+    }
+
 		// Loop through the choosen default resolutions if there were any
 		for ( i = 0; i < default_resolutions.length; i++ ) {
-			
 			// Set the video to start out with the first available default res
 			if ( available_res[default_resolutions[i]] ) {
 				
@@ -320,7 +348,7 @@
 				break;
 			}
 		}
-
+		
 		// Helper function to get the current resolution
 		player.getCurrentRes = function() {
 			
@@ -361,8 +389,24 @@
 			available_res	: available_res
 		});
 		
+    // Attach an event to remember previous res selection via cookie
+    this.on('changeRes', function() {
+      cookieRef.set(resCookieName, player.getCurrentRes());
+    });
+
+    // Attach an event to update player.src once on loadedmetadata
+    // if a resolution was previously set
+    this.one('loadedmetadata', function() {
+      var resCookie = cookieRef.get(resCookieName);
+
+      if (resCookie) {
+        player.src(player.availableRes[resCookie]);
+        player.currentRes = resCookie;
+        player.trigger( 'changeRes' );
+      }
+    });
+
 		// Add the button to the control bar object and the DOM
 		player.controlBar.resolutionSelector = player.controlBar.addChild( resolutionSelector );
 	});
-
 })( videojs );

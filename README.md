@@ -36,6 +36,10 @@ The plugin also triggers a `changeRes` event on the player instance anytime the 
 		});
 	});
 
+Important
+-----
+Remembering the selection of the last resolution is reliant upon the [Cookies library](https://github.com/ScottHamper/Cookies). For convenience the cookies library is included in `videojs-resolution-selector-cookies.min.js`. However, it is recommended to use `videojs-resolution-selector.min` and include the Cookies library separately.
+
 Things to Work On
 -----------------
 - It would be really cool if this supported an "auto" option that used MPEG-DASH and/or HLS to enable adaptive resolution videos in addition to manual selection.

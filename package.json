@@ -1,0 +1,21 @@
+{
+  "name": "videojs-resolution-selector",
+  "version": "0.1.2",
+  "description": "Add a resolution selector button to Video.js to allow users to manually adjust the video quality.",
+  "license": "MIT",
+  "repository": "https://github.com/aervans/videojs-resolution-selector",
+  "author": {
+    "name": "Dominic",
+    "email": "solaveritasteliberum@gmail.com",
+    "url": "https://github.com/dominic-p"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-shell": "^0.7.0"
+  }
+}
